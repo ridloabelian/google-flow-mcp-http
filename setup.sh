@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: ./setup.sh [--domain flow-mcp.domain.id] [--email akun@gmail.com] [--tunnel-token TOKEN] [--non-interactive]" >&2
+      echo "Usage: ./setup.sh [--domain flow-mcp.yourdomain.com] [--email you@gmail.com] [--tunnel-token TOKEN] [--non-interactive]" >&2
       exit 1
       ;;
   esac
@@ -44,15 +44,15 @@ gen_hex_secret() {
 }
 
 if [[ "$NON_INTERACTIVE" == "false" && -z "$DOMAIN" ]]; then
-  read -r -p "Masukkan domain publik MCP (kosongkan untuk lokal 127.0.0.1:3100): " DOMAIN || true
+  read -r -p "Enter public MCP domain (leave blank for local 127.0.0.1:3100): " DOMAIN || true
 fi
 
 if [[ "$NON_INTERACTIVE" == "false" && -z "$EMAIL" ]]; then
-  read -r -p "Masukkan email Google Flow untuk proteksi akun (opsional, tekan Enter untuk skip): " EMAIL || true
+  read -r -p "Enter expected Google Flow email for account guard (optional, press Enter to skip): " EMAIL || true
 fi
 
 if [[ "$NON_INTERACTIVE" == "false" && -n "$DOMAIN" && -z "$TUNNEL_TOKEN" ]]; then
-  read -r -p "Masukkan CLOUDFLARE_TUNNEL_TOKEN bila memakai Docker cloudflared (opsional): " TUNNEL_TOKEN || true
+  read -r -p "Enter CLOUDFLARE_TUNNEL_TOKEN if using Docker cloudflared (optional): " TUNNEL_TOKEN || true
 fi
 
 CLEAN_DOMAIN="${DOMAIN#https://}"
@@ -69,7 +69,7 @@ else
 fi
 
 if [[ -f .env ]]; then
-  echo "[setup] File .env sudah ada, membaca token yang tersimpan..."
+  echo "[setup] Existing .env found; preserving stored tokens..."
   AUTH_TOKEN="$(grep -E '^FLOW_MCP_AUTH_TOKEN=' .env | cut -d'=' -f2- || true)"
   SIGN_SECRET="$(grep -E '^FLOW_MEDIA_SIGNING_SECRET=' .env | cut -d'=' -f2- || true)"
   [[ -z "$AUTH_TOKEN" ]] && AUTH_TOKEN="$(gen_hex_secret)"
@@ -109,7 +109,7 @@ FLOW_SELECTORS_PATH=./config/selectors.map.json
 CLOUDFLARE_TUNNEL_TOKEN=${TUNNEL_TOKEN}
 EOF
   chmod 600 .env
-  echo "[setup] Berhasil membuat .env dengan token acak 256-bit."
+  echo "[setup] Created .env with 256-bit random secrets."
 fi
 
 mkdir -p exports state/jobs state/screenshots generated-configs
@@ -138,14 +138,14 @@ fi
 
 echo ""
 echo "=================================================================="
-echo " Plug-and-Play Setup Selesai!"
+echo " Plug-and-Play Setup Complete!"
 echo "=================================================================="
-echo " Endpoint MCP  : ${PUBLIC_BASE_URL}/mcp"
+echo " MCP Endpoint  : ${PUBLIC_BASE_URL}/mcp"
 echo " Client Config : generated-configs/mcp-client.json"
 echo ""
-echo " Langkah selanjutnya:"
-echo "   1) Docker Headless + KasmVNC : make up  (atau: make up-tunnel)"
-echo "   2) Bare-Metal Lokal          : make install && make chrome && make start"
-echo "   3) Uji End-to-End Smoke Test : make test"
-echo "   4) Pasang SKILL.md ke Agent  : make install-skill"
+echo " Next steps:"
+echo "   1) Headless Docker + KasmVNC : make up  (or: make up-tunnel)"
+echo "   2) Local Bare-Metal          : make install && make chrome && make start"
+echo "   3) End-to-End Smoke Test     : make test"
+echo "   4) Install Agent SKILL.md    : make install-skill"
 echo "=================================================================="

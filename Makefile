@@ -1,19 +1,19 @@
 .PHONY: help setup install build dev start doctor up up-tunnel down logs test install-skill cf-provision chrome
 
 help:
-	@echo "Perintah Plug-and-Play google-flow-mcp-http:"
-	@echo "  make setup          - Generate .env otomatis (secret 256-bit) & config klien MCP"
-	@echo "  make up             - Jalankan Docker stack (Chromium KasmVNC + MCP Streamable HTTP)"
-	@echo "  make up-tunnel      - Jalankan Docker stack + sidecar Cloudflare Tunnel"
-	@echo "  make down           - Hentikan semua container Docker"
-	@echo "  make logs           - Pantau log container MCP server secara live"
-	@echo "  make install        - Install dependencies & build TypeScript (mode bare-metal)"
-	@echo "  make chrome         - Jalankan Chrome asli lokal dengan CDP 127.0.0.1:9222"
-	@echo "  make start          - Jalankan server Streamable HTTP lokal (bare-metal)"
-	@echo "  make doctor         - Periksa kesehatan CDP & bersihkan tab Chrome yang hang"
-	@echo "  make test           - Jalankan smoke test JSON-RPC end-to-end ke endpoint /mcp"
-	@echo "  make install-skill  - Copy SKILL.md ke Hermes Agent, Claude Code, dan Antigravity"
-	@echo "  make cf-provision   - Pasang aturan SSE unbuffered otomatis via Cloudflare API"
+	@echo "Plug-and-Play commands for google-flow-mcp-http:"
+	@echo "  make setup          - Generate .env (256-bit secrets) & MCP client config"
+	@echo "  make up             - Start Docker stack (Chromium KasmVNC + MCP Streamable HTTP)"
+	@echo "  make up-tunnel      - Start Docker stack + Cloudflare Tunnel sidecar"
+	@echo "  make down           - Stop all Docker containers"
+	@echo "  make logs           - Tail live logs from flow-mcp-server"
+	@echo "  make install        - Install dependencies & build TypeScript (bare-metal)"
+	@echo "  make chrome         - Launch local Chrome with CDP on 127.0.0.1:9222"
+	@echo "  make start          - Start local Streamable HTTP server (bare-metal)"
+	@echo "  make doctor         - Check CDP health & close hung/crashed Chrome tabs"
+	@echo "  make test           - Run end-to-end JSON-RPC smoke test against /mcp"
+	@echo "  make install-skill  - Install SKILL.md to Hermes Agent, Claude Code, and Antigravity"
+	@echo "  make cf-provision   - Provision unbuffered SSE Configuration Rule via Cloudflare API"
 
 setup:
 	@bash ./setup.sh
@@ -37,7 +37,7 @@ doctor:
 up:
 	@test -f .env || bash ./setup.sh --non-interactive
 	docker compose up -d --build
-	@echo "KasmVNC Login GUI tersedia di https://127.0.0.1:3001 (gunakan SSH tunnel bila di VPS/Homelab)"
+	@echo "KasmVNC Login GUI available at https://127.0.0.1:3001 (use an SSH tunnel on headless VPS/homelab)"
 
 up-tunnel:
 	@test -f .env || bash ./setup.sh
@@ -57,7 +57,7 @@ install-skill:
 	@cp skills/google-flow-mcp/SKILL.md "$$HOME/.hermes/skills/google-flow-mcp/SKILL.md"
 	@cp skills/google-flow-mcp/SKILL.md "$$HOME/.claude/skills/google-flow-mcp/SKILL.md"
 	@cp skills/google-flow-mcp/SKILL.md ".agent/skills/google-flow-mcp/SKILL.md"
-	@echo "[OK] SKILL.md terpasang di ~/.hermes/skills, ~/.claude/skills, dan .agent/skills"
+	@echo "[OK] SKILL.md installed to ~/.hermes/skills, ~/.claude/skills, and .agent/skills"
 
 cf-provision:
 	node scripts/provision-cloudflare-rules.mjs
