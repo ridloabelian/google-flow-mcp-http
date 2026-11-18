@@ -1,0 +1,51 @@
+services:
+  chrome-flow:
+    image: lscr.io/linuxserver/chromium:latest
+    container_name: google-flow-chrome
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Jakarta
+      - CHROME_CLI=--remote-debugging-address=0.0.0.0 --remote-debugging-port=9222 --disable-background-timer-throttling --disable-renderer-backgrounding https://flow.google.com
+    volumes:
+      - ./docker-data/chrome-config:/config
+    ports:
+      - "127.0.0.1:3001:3001"
+    shm_size: "2gb"
+    networks:
+      - flow_internal
+    restart: unless-stopped
+
+  flow-mcp-server:
+    build: .
+    container_name: google-flow-mcp-http
+    depends_on:
+      - chrome-flow
+    env_file:
+      - .env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3100
+      - FLOW_CDP_URL=http://chrome-flow:9222
+      - FLOW_OUTPUT_DIR=/app/exports
+      - FLOW_STATE_DIR=/app/state
+    volumes:
+      - ./exports:/app/exports
+      - ./state:/app/state
+      - ./config:/app/config:ro
+    ports:
+      - "127.0.0.1:3100:3100"
+    networks:
+      - flow_internal
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3100/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  flow_internal:
+    driver: bridge

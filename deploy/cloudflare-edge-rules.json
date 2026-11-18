@@ -1,0 +1,38 @@
+{
+  "description": "Referensi konfigurasi Cloudflare Configuration Rules & WAF Custom Rules untuk Google Flow Streamable HTTP MCP",
+  "configuration_rule_disable_sse_buffering": {
+    "description": "Matikan Response Body Buffering pada jalur /mcp agar stream SSE tidak ditahan di edge Cloudflare",
+    "expression": "(http.host eq \"flow-mcp.domainkamu.id\" and starts_with(http.request.uri.path, \"/mcp\"))",
+    "action": "set_config",
+    "action_parameters": {
+      "request_body_buffering": "standard",
+      "response_body_buffering": "none"
+    }
+  },
+  "waf_custom_rule_allow_agent_clients": {
+    "description": "Lewati Super Bot Fight Mode / Managed Challenge untuk klien MCP yang mengirim header Authorization Bearer atau Cloudflare Access Service Token",
+    "expression": "(http.host eq \"flow-mcp.domainkamu.id\" and (len(http.request.headers[\"authorization\"]) > 0 or len(http.request.headers[\"cf-access-client-id\"]) > 0 or starts_with(http.request.uri.path, \"/media/\")))",
+    "action": "skip",
+    "action_parameters": {
+      "phases": [
+        "http_ratelimit",
+        "http_request_sbfm",
+        "http_request_firewall_managed"
+      ]
+    }
+  },
+  "zero_trust_access_policies": [
+    {
+      "app_path": "flow-mcp.domainkamu.id/mcp*",
+      "policy_name": "Allow Autonomous Agents via Service Token",
+      "action": "non_identity",
+      "include": [{ "service_token": { "token_id": "<SERVICE_TOKEN_UUID>" } }]
+    },
+    {
+      "app_path": "flow-mcp.domainkamu.id/media/*",
+      "policy_name": "Bypass Access on HMAC-Signed Media Downloads",
+      "action": "bypass",
+      "include": [{ "everyone": {} }]
+    }
+  ]
+}

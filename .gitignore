@@ -1,0 +1,19 @@
+# Dependencies & Build
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Secrets & Generated Client Configs (NEVER COMMIT)
+.env
+.env.*
+!.env.example
+generated-configs/
+
+# Runtime State, Browser Profiles, & Media Exports
+exports/
+state/
+docker-data/
+*.mp4
+*.png
+*.log
+.DS_Store

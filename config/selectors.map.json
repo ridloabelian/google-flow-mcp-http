@@ -1,0 +1,33 @@
+{
+  "version": "2026-11-18",
+  "urls": {
+    "flowHome": "https://flow.google.com",
+    "trpcVideoModels": "/fx/api/trpc/videoFx.getVideoModelConfig",
+    "trpcUserHistory": "/fx/api/trpc/media.fetchUserHistoryDirectly",
+    "trpcCreateProject": "/fx/api/trpc/project.createProject"
+  },
+  "selectors": {
+    "composerTextbox": "textarea, [role='textbox'][contenteditable='true']",
+    "sendButtonIconPattern": "arrow_forward|send|auto_awesome",
+    "settingsButtonIconPattern": "tune|settings",
+    "newProjectButtonPattern": "add_2|add|New project|Proyek baru",
+    "attachButtonIconPattern": "add_2|add_photo_alternate|attach_file",
+    "videoTile": "flow-video-tile, [data-tile-type='video'], video[src*='/asb/']",
+    "imageTile": "flow-image-tile, [data-tile-type='image'], img[src*='/asb/']",
+    "creditQuotePattern": "(\\d+)\\s*credits?",
+    "generatingIndicatorPattern": "Generating|Creating|Rendering|Membuat"
+  },
+  "models": {
+    "image": [
+      { "id": "nano-banana-2", "label": "Nano Banana 2", "estimatedCredits": 1 },
+      { "id": "nano-banana-pro", "label": "Nano Banana Pro", "estimatedCredits": 2 },
+      { "id": "imagen-4", "label": "Imagen 4", "estimatedCredits": 2 }
+    ],
+    "video": [
+      { "id": "omni-flash", "label": "Omni Flash", "estimatedCredits": 5 },
+      { "id": "veo-3.1-lite", "label": "Veo 3.1 Lite", "estimatedCredits": 10 },
+      { "id": "veo-3.1-fast", "label": "Veo 3.1 Fast", "estimatedCredits": 20 },
+      { "id": "veo-3.1-quality", "label": "Veo 3.1 Quality", "estimatedCredits": 100 }
+    ]
+  }
+}

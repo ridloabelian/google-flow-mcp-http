@@ -1,0 +1,26 @@
+flow-mcp.domainkamu.id {
+    encode zstd gzip
+
+    @mcp_stream {
+        path /mcp*
+    }
+    handle @mcp_stream {
+        reverse_proxy 127.0.0.1:3100 {
+            flush_interval -1
+            header_up Host {host}
+            header_up X-Forwarded-Proto {scheme}
+            transport http {
+                read_timeout 10m
+                write_timeout 10m
+                response_header_timeout 10m
+            }
+        }
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:3100 {
+            header_up Host {host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}

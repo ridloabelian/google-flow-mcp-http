@@ -1,0 +1,36 @@
+# Salin ke .github/workflows/ci.yml secara lokal bila ingin mengaktifkan GitHub Actions CI
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck & Build TypeScript
+        run: |
+          npm run typecheck
+          npm run build
+
+      - name: Validate Shell Scripts & JSON Configs
+        run: |
+          bash -n setup.sh
+          bash -n scripts/start-chrome-cdp.sh
+          node --check scripts/smoke-test.mjs
+          node --check scripts/provision-cloudflare-rules.mjs

@@ -1,0 +1,16 @@
+tunnel: <TUNNEL_UUID_KAMU>
+credentials-file: /etc/cloudflared/<TUNNEL_UUID_KAMU>.json
+
+ingress:
+  - hostname: flow-mcp.domainkamu.id
+    service: http://127.0.0.1:3100
+    originRequest:
+      httpHostHeader: flow-mcp.domainkamu.id
+      disableChunkedEncoding: false
+      connectTimeout: 30s
+      tcpKeepAlive: 30s
+      keepAliveConnections: 100
+      keepAliveTimeout: 600s
+      noHappyEyeballs: false
+
+  - service: http_status:404

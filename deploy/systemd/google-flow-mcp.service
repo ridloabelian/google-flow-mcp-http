@@ -1,0 +1,18 @@
+[Unit]
+Description=Google Flow Streamable HTTP MCP Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/google-flow-mcp-http
+EnvironmentFile=/opt/google-flow-mcp-http/.env
+ExecStartPre=/opt/google-flow-mcp-http/scripts/start-chrome-cdp.sh
+ExecStart=/usr/bin/node /opt/google-flow-mcp-http/dist/index.js
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
